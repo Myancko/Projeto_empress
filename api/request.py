@@ -83,7 +83,7 @@ async def delete_request(id: int, sess: Session = Depends(sess_db)):
         return JSONResponse(content={'message': 'delete login error'}, status_code=500)
     
 @router.patch("/request/update")
-def update_request_testa_essa_ph_em(id: int, req: Request_req, sess: Session = Depends(sess_db)):
+def update_request(id: int, req: Request_req, sess: Session = Depends(sess_db)):
     
     request = req.dict(exclude_unset=True)
     repo: RequestRepository = RequestRepository(sess)
