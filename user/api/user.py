@@ -3,15 +3,15 @@ from fastapi.responses import JSONResponse
 
 from sqlalchemy.orm import Session
 from db_config.sqlalchemy_config import SessionFactory
-from models.user import User_req
-from repository.user import UserRepository
+from ..models.user import User_req
+from ..repository.user import UserRepository
 from models.sqlalchemy_models.alchemy_mod import User
 from typing import List
 
 import security
 
 
-router = APIRouter()
+router = APIRouter(prefix="/account", tags=["User"])
 
 
 def sess_db():
@@ -22,13 +22,13 @@ def sess_db():
         db.close()
         
     
-@router.get("/signup/list")
+@router.get("/list")
 async def list_accounts(sess: Session = Depends(sess_db)):
     repo: UserRepository = UserRepository(sess)
     result = repo.get_all_accounts()
     return result
 
-@router.get("/signup/get/{id}")
+@router.get("/get/{id}")
 async def get_account(id: int, sess: Session = Depends(sess_db)):
     repo: UserRepository = UserRepository(sess)
     result = repo.get_account(id)
@@ -58,7 +58,7 @@ def login(matricula : str, password: str, sess: Session = Depends(sess_db)):
 
 
         
-@router.post("/signup/add")
+@router.post("/add")
 def create_account(req: User_req, sess: Session = Depends(sess_db)):
     repo: UserRepository = UserRepository(sess)
 
@@ -78,16 +78,16 @@ def create_account(req: User_req, sess: Session = Depends(sess_db)):
         return JSONResponse(content={'message': 'create signup problem encountered, the email and the matrcula have to e different from an existing one'}, status_code=500)
 
 
-@router.delete("/account/delete/{id}")
+@router.delete("/delete/{id}")
 async def delete_account(id: int, sess: Session = Depends(sess_db)):
     repo: UserRepository = UserRepository(sess)
     result = repo.delete_user(id)
     if result:
-        return JSONResponse(content={'message': 'login deleted successfully'}, status_code=201)
+        return JSONResponse(content={'message': 'login deleted successfully'}, status_code=200)
     else:
         return JSONResponse(content={'message': 'delete login error'}, status_code=500)
    
-@router.patch("/account/update")
+@router.patch("/update/{id}")
 def update_account(id: int, req: User_req, sess: Session = Depends(sess_db)):
     
     request = req.dict(exclude_unset=True)

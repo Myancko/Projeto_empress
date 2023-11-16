@@ -1,12 +1,13 @@
 import datetime
-from pydantic import validator
+import security
+from pydantic import validator, field_validator
 from sqlalchemy import ForeignKey, Date, Column, String, Integer, Boolean
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 
-import security
 
 class Base(DeclarativeBase):
     pass
+
 
 class User (Base):  
     
@@ -20,7 +21,7 @@ class User (Base):
     number = Column(String, nullable=True)
     role = Column(Integer, nullable=True)
     
-    @validator('password', pre=True)
+    @field_validator('password')
     def hash_password(cls, v):
         return security.get_password_hash(v)
     
