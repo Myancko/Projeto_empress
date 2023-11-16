@@ -1,7 +1,8 @@
 from typing import Dict, Any
 from sqlalchemy.orm import Session
-from models.sqlalchemy_models.alchemy_mod import Request
+from models.sqlalchemy_models.alchemy_mod import Request, User
 from sqlalchemy import desc
+import shutil
 
 class RequestRepository:
 
@@ -32,10 +33,17 @@ class RequestRepository:
 
     def delete_request(self, id: int) -> bool:
         try:
+
+            r = self.sess.query(Request).filter(Request.id_request == id).one_or_none()
+            owner = self.sess.query(User).filter(User.id_user == r.owner).one_or_none()
             request = self.sess.query(Request).filter(Request.id_request == id).delete()
             self.sess.commit()
+            
+            
+            shutil.rmtree(f'requests/{owner.matricula}/{id}') #limpa a pasta
 
         except:
+            
             return False
         return True
     

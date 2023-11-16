@@ -77,6 +77,7 @@ async def add_request(req: Request_req = Depends(),
 @router.delete("/delete/{id}")
 async def delete_request(id: int, sess: Session = Depends(sess_db)):
     repo: RequestRepository = RequestRepository(sess)
+    
     result = repo.delete_request(id)
     if result:
         return JSONResponse(content={'message': 'request deleted successfully'}, status_code=200)
